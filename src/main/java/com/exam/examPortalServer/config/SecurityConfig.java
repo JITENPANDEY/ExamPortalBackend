@@ -13,8 +13,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -34,14 +33,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception{
         return super.authenticationManagerBean();
     }
-//    @Bean
-//    public BCryptPasswordEncoder passwordEncoder(){
-//        return new BCryptPasswordEncoder();
-//    }
     @Bean
-    public PasswordEncoder passwordEncoder(){
-        return NoOpPasswordEncoder.getInstance();
+    public BCryptPasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
     }
+//    @Bean
+//    public PasswordEncoder passwordEncoder(){
+//        return NoOpPasswordEncoder.getInstance();
+//    }
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(this.userDetailService).passwordEncoder(passwordEncoder());
@@ -55,7 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                .cors()
                .disable()
                .authorizeRequests()
-               .antMatchers("/generate_token", "/user/add").permitAll()
+               .antMatchers("/generate_token", "/user/**").permitAll()
                .antMatchers(HttpMethod.OPTIONS).permitAll()
                .anyRequest().authenticated()
                .and()

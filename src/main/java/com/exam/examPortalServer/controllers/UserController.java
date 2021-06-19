@@ -8,6 +8,7 @@ import com.exam.examPortalServer.services.UserService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
@@ -16,15 +17,20 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @RestController
+
 @RequestMapping("/user")
+@CrossOrigin("*")
 public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @PostMapping("/add")
     public User createUser(@RequestBody User user) throws BadRequestException {
 
+        user.setPassword(this.bCryptPasswordEncoder.encode(user.getPassword()));
         Set<User_Roles> userRoles = new HashSet<>();
         Role r1 = new Role("Customer");
 //        Role r2 = new Role("Admin");
